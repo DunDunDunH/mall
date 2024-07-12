@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dun.mapper.OrderMapper">
+
+    <select id="getList" resultType="com.dun.entity.dto.OrderDto">
+        SELECT o.id,p.name as product_name,o.create_time
+        FROM `order` o
+        left join product p on o.product_id = p.id
+        <where>
+            AND o.user_id = #{userId}
+            <if test="productName != null and productName != ''">
+                AND p.name LIKE "%"#{productName}"%"
+            </if>
+            AND o.is_deleted = 0
+            AND p.is_deleted = 0
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="getById" resultType="com.dun.entity.dto.OrderDto">
+        SELECT o.id,p.name as product_name,p.price as product_price,o.create_time
+        FROM `order` o
+        left join product p on o.product_id = p.id
+        <where>
+            AND o.id = #{id}
+            AND o.is_deleted = 0
+            AND p.is_deleted = 0
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <insert id="insert">
+        INSERT INTO `order`(id, user_id, product_id, create_time, is_deleted)
+        VALUES
+        (#{id}, #{userId}, #{productId}, #{createTime}, 0)
+    </insert>
+</mapper>
